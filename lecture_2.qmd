@@ -142,6 +142,8 @@ df %>%
 ```
 
 ```{r}
+#| out-width: 100%
+
 anim <-
 df %>%
     mutate(name = recode(name,
