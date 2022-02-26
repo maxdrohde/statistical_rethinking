@@ -1,0 +1,172 @@
+# Lecture 2
+
+```{r}
+# Load packages
+library(rethinking)
+library(Hmisc)
+
+library(rstanarm)
+library(cmdstanr)
+library(posterior)
+library(bayesplot)
+library(tidybayes)
+
+library(geomtextpath)
+library(cowplot)
+library(patchwork)
+library(glue)
+library(gganimate)
+
+library(tidyverse)
+
+# Set global ggplot theme
+theme_set(cowplot::theme_cowplot(font_size=12,
+                                 font_family = "Source Sans Pro"))
+
+set.seed(0.7)
+```
+
+## Grid approximation to the beta-binomial model
+
+The grid approximation works using these steps:
+
+-   Specify the number of data points for the grid, here it is 1000.
+-   For each of the grid points, specify the prior probability. Here we use a staircase shape where the values 0 to 0.5 have a prior weight of 1, and values 0.5 to 1 have a prior weight of 4. Using these weights and the grid size, we can then normalize the prior to integrate to 1.
+-   Specify the likelihood for each value of the grid points. This is the stage where we use the data.
+-   Multiply the prior and likelihood, to get the unnormalized posterior, which can then be normalized the get the posterior.
+
+```{r}
+grid_size <- 1000
+
+data <- sample(c(0,1), replace=TRUE, prob=c(0.3, 0.7), size=8)
+
+p_grid <- seq(0,1, length.out = grid_size)
+
+prior <-
+  c(
+  rep(1, grid_size/2),
+  rep(4, grid_size/2)
+  )
+
+prior <- (prior / sum(prior))
+           
+likelihood <- dbinom(x = sum(data), size = length(data), prob = p_grid)
+posterior <- prior * likelihood
+```
+
+```{r}
+# Note that the (unnormalized) posterior doesn't sum to 1
+sum(posterior)
+```
+
+```{r}
+# Normalize the posterior
+posterior <- (posterior / sum(posterior))
+```
+
+```{r}
+# Normalize the likelihood
+likelihood <- (likelihood / sum(likelihood))
+```
+
+```{r}
+tibble(p = p_grid, prior, likelihood, posterior) %>%
+  pivot_longer(prior:posterior, names_to = "name", values_to = "value") %>%
+  ggplot() +
+  aes(x= p, y=value, color=name) +
+  geom_line() +
+  facet_wrap(~name)
+```
+
+## Animate grid approximation
+
+```{r}
+data <- sample(c(0,1), replace=TRUE, prob=c(0.3, 0.7), size=100)
+
+# Sample 50 samples from the globe
+subsets <- purrr::map(1:length(data), ~data[1:.x])
+```
+
+```{r}
+generate_dataset <- function(data){
+  
+  grid_size <- 2000 * 3
+  
+  p_grid <- seq(0,1, length.out = grid_size)
+
+  prior <-
+    c(
+    rep(1, grid_size/3),
+    rep(4, grid_size/3),
+    rep(6, grid_size/3)
+    )
+  
+  prior <- (prior / sum(prior))
+             
+  likelihood <- dbinom(x = sum(data), size = length(data), prob = p_grid)
+  posterior <- prior * likelihood
+  
+  posterior <- (posterior / sum(posterior))
+  
+  likelihood <- (likelihood / sum(likelihood))
+  
+  df <- 
+    tibble(p = p_grid, prior, likelihood, posterior) %>%
+    pivot_longer(prior:posterior, names_to = "name", values_to = "value")
+  
+  return(df)
+}
+```
+
+```{r}
+df <-
+  purrr::map_dfr(subsets, ~generate_dataset(.x), .id = "subset") %>%
+  mutate(subset = as.integer(subset))
+```
+
+```{r}
+cred <-
+df %>%
+  filter(name == "posterior") %>%
+  group_by(subset) %>%
+  summarize(lower = p[which(cumsum(value) < 0.025)] %>% tail(n=1),
+            upper = p[which(cumsum(value) > 0.975)] %>% head(n=1)) %>%
+  mutate(name = "Posterior") %>%
+  mutate(lower = round(lower,3),
+         upper = round(upper,3)) %>%
+  mutate(label = glue("95% Posterior Interval:\n[{lower}, {upper}]"))
+```
+
+```{r}
+anim <-
+df %>%
+    mutate(name = recode(name,
+                       `likelihood` = "Likelihood",
+                       `prior` = "Prior",
+                       `posterior` = "Posterior")) %>%
+    ggplot() +
+    aes(x= p, y=value, color=name) +
+    geom_line() +
+    geom_text(data=cred, mapping=aes(label=label), x = 0.25, y = 0.0015, color="black") +
+    geom_segment(data=cred,
+                 mapping = aes(x = lower, xend = upper, y = 0, yend = 0),
+                 size=3,
+                 alpha=0.6,
+                 color="black",
+                 lineend = "round") +
+    geom_vline(xintercept = 0.7, linetype=2, alpha=0.7) +
+    facet_wrap(~name) +
+    theme(legend.position = "none") +
+    labs(x = "Probability of water",
+         y = "Probability Density",
+         title = "Data points: {current_frame}") +
+    transition_manual(frame = subset)
+
+animate(anim,
+        duration=10,
+        height = 6,
+        width = 12,
+        units = "in",
+        res = 300,
+        renderer = ffmpeg_renderer())
+```

@@ -1,0 +1,35 @@
+project:
+  type: book
+  output-dir: docs
+  
+book:
+  title: "Statistical Rethinking Lecture Notes"
+  author: "Max Rohde"
+  description: | 
+    ADD DESCR HERE
+  cover-image: images/cover.png
+  chapters:
+    - index.qmd
+    - lecture_1.qmd
+    - lecture_2.qmd
+
+format:
+  html: 
+    theme: journal
+    cover-image: cover.png
+    fontsize: 16px
+    code-fold: true
+    code-link: true
+    code-tools: true
+    code-block-bg: "#e8e8e8"
+    code-block-border-left: "#31BAE9"
+    mainfont: Source Sans Pro
+    monofont: Menlo
+    fig-format: retina
+    fig-width: 8
+    fig-height: 6
+    cache: false
+    
+execute:
+  warning: false
+  message: false

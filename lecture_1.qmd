@@ -1,0 +1,32 @@
+# Lecture 1
+
+```{r}
+# Load packages
+library(rethinking)
+library(Hmisc)
+
+library(rstanarm)
+library(cmdstanr)
+library(posterior)
+library(bayesplot)
+library(tidybayes)
+
+library(geomtextpath)
+library(cowplot)
+library(patchwork)
+library(glue)
+library(gganimate)
+
+library(tidyverse)
+
+# Set global ggplot theme
+theme_set(cowplot::theme_cowplot(font_size=12,
+                                 font_family = "Source Sans Pro"))
+
+set.seed(0.7)
+```
+
+-   Goal of this course is to integrate scientific modeling and statistical modeling.
+-   Statistical modeling can be dangerous - models have no wisdom or foresight.
+-   Commonly used frequentist tests meant for limited applications. Bespoke statistical models are a better fit for most scientific research.
+-   Thinking about causal inference is essential. DAGs are a great way to start.
