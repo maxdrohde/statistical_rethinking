@@ -6,12 +6,15 @@ book:
   title: "Statistical Rethinking Lecture Notes"
   author: "Max Rohde"
   description: | 
-    ADD DESCR HERE
+    Notes on Statistical Rethinking Course 2022
   cover-image: images/cover.png
   chapters:
     - index.qmd
     - lecture_1.qmd
     - lecture_2.qmd
+    - lecture_3.qmd
+    - lecture_4.qmd
+    - lecture_5.qmd
 
 format:
   html: 

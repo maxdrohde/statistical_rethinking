@@ -1,0 +1,27 @@
+# Lecture 5
+
+```{r}
+# Load packages
+library(rethinking)
+library(Hmisc)
+
+library(rstanarm)
+library(cmdstanr)
+library(posterior)
+library(bayesplot)
+library(tidybayes)
+
+library(geomtextpath)
+library(cowplot)
+library(patchwork)
+library(glue)
+library(gganimate)
+
+library(tidyverse)
+
+# Set global ggplot theme
+theme_set(cowplot::theme_cowplot(font_size=12,
+                                 font_family = "Source Sans Pro"))
+
+set.seed(0.7)
+```

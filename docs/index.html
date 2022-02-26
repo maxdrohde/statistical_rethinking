@@ -4,7 +4,7 @@
   <meta name="generator" content="quarto-0.9.30">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <meta name="author" content="Max Rohde">
-  <meta name="description" content="ADD DESCR HERE">
+  <meta name="description" content="Notes on Statistical Rethinking Course 2022">
   <title>Statistical Rethinking Lecture Notes</title>
   <style>
     code{white-space: pre-wrap;}
@@ -161,6 +161,21 @@
   <a href="./lecture_2.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lecture 2</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_3.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lecture 3</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_4.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lecture 4</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_5.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lecture 5</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -170,7 +185,6 @@
 <h2 id="toc-title">Table of contents</h2>
 <ul>
 <li><a href="#welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a></li>
-<li><a href="#license" class="nav-link" data-scroll-target="#license">License</a></li>
 </ul>
 </nav>
     </div>
@@ -184,39 +198,28 @@
 
 <section id="welcome" class="level2 unnumbered">
 <p><img src="cover.png" title="Statistical Rethinking Lecture Notes" class="quarto-cover-image img-fluid"></p><h2 class="unnumbered anchored" data-anchor-id="welcome">Welcome</h2>
-<p>This is the website for <strong>“Hands-On Programming with R”</strong>. This book will teach you how to program in R, with hands-on examples. I wrote it for non-programmers to provide a friendly introduction to the R language. You’ll learn how to load data, assemble and disassemble data objects, navigate R’s environment system, write your own functions, and use all of R’s programming tools. Throughout the book, you’ll use your newfound skills to solve practical data science problems.</p>
-<p>If you are already comfortable with R, and would like to focus instead how to analyze data using R’s Tidyverse packages, I recommend <a href="http://r4ds.had.co.nz/">R for Data Science</a>, a book that I co-authored with Hadley Wickham.</p>
+<p>These are my personal notes for the Statistical Rethinking 2022 course by Richard McElreath found here <a href="https://github.com/rmcelreath/stat_rethinking_2022" class="uri">https://github.com/rmcelreath/stat_rethinking_2022</a>.</p>
 <div class="callout-note callout callout-style-simple">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>This book was originally created using <a href="https://bookdown.org">bookdown</a> and published at <a href="https://rstudio-education.github.io/hopr/" class="uri">https://rstudio-education.github.io/hopr/</a>. This site is a port of the original book source to the <a href="https://quarto.org">Quarto</a> publishing system in order to provide an example of it’s use.</p>
+<p>This book was created using <a href="https://quarto.org">Quarto</a>.</p>
 </div>
 </div>
 </div>
-</section>
-<section id="license" class="level2">
-<h2 class="anchored" data-anchor-id="license">License</h2>
-<p>This website is (and will always be) <strong>free to use</strong>, and is licensed under the <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivs 4.0</a> License. If you’d like a <strong>physical copy</strong> of the book, you can order it from <a href="https://www.amazon.com/Hands-Programming-Write-Functions-Simulations/dp/1449359019">amazon</a>; it was published by O’Reilly in July 2014. If you’d like to give back, please consider reporting a typo or leaving a pull request at <a href="https://github.com/rstudio-education/hopr">github.com/rstudio-education/hopr</a>.</p>
 
 
 <!-- -->
 <div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title anchored" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Welcome {.unnumbered}</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>This is the website for **"Hands-On Programming with R"**. This book will teach you how to program in R, with hands-on examples. I wrote it for non-programmers to provide a friendly introduction to the R language. You'll learn how to load data, assemble and disassemble data objects, navigate R's environment system, write your own functions, and use all of R's programming tools. Throughout the book, you'll use your newfound skills to solve practical data science problems.</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>These are my personal notes for the Statistical Rethinking 2022 course by Richard McElreath found here <span class="ot">&lt;https://github.com/rmcelreath/stat_rethinking_2022&gt;</span>.</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>If you are already comfortable with R, and would like to focus instead how to analyze data using R's Tidyverse packages, I recommend <span class="co">[</span><span class="ot">R for Data Science</span><span class="co">](http://r4ds.had.co.nz/)</span>, a book that I co-authored with Hadley Wickham.</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>This book was originally created using <span class="co">[</span><span class="ot">bookdown</span><span class="co">](https://bookdown.org)</span> and published at <span class="ot">&lt;https://rstudio-education.github.io/hopr/&gt;</span>. This site is a port of the original book source to the <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org)</span> publishing system in order to provide an example of it's use.</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## License</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>This website is (and will always be) **free to use**, and is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivs 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) License. If you'd like a **physical copy** of the book, you can order it from <span class="co">[</span><span class="ot">amazon</span><span class="co">](https://www.amazon.com/Hands-Programming-Write-Functions-Simulations/dp/1449359019)</span>; it was published by O'Reilly in July 2014. If you'd like to give back, please consider reporting a typo or leaving a pull request at <span class="co">[</span><span class="ot">github.com/rstudio-education/hopr</span><span class="co">](https://github.com/rstudio-education/hopr)</span>.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple"}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>This book was created using <span class="co">[</span><span class="ot">Quarto</span><span class="co">](https://quarto.org)</span>.</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </section>
 </main> <!-- /main -->
