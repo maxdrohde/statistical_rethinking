@@ -70,8 +70,6 @@ likelihood <- (likelihood / sum(likelihood))
 ```
 
 ```{r}
-#| column: page
-
 # Create plot of prior, likelihood, and posterior
 tibble(p = p_grid, prior, likelihood, posterior) %>%
   pivot_longer(prior:posterior, names_to = "name", values_to = "value") %>%
