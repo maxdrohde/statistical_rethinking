@@ -23,6 +23,10 @@ library(tidyverse)
 theme_set(cowplot::theme_cowplot(font_size=14,
                                  font_family = "Source Sans Pro"))
 
+cmdstanr::register_knitr_engine(override = TRUE)
+
+options(mc.cores = parallel::detectCores())
+
 set.seed(0.7)
 ```
 
@@ -143,6 +147,7 @@ df %>%
 
 ```{r}
 #| out-width: 100%
+#| eval: false
 
 anim <-
 df %>%
@@ -175,4 +180,28 @@ animate(anim,
         units = "in",
         res = 300,
         renderer = ffmpeg_renderer())
+```
+
+## Posterior Predictive Distribution
+
+## Writing the model in Stan
+
+```{stan, output.var = "model"}
+data {
+    int<lower=0> N;
+    int <lower=0, upper=N> y;
+}
+
+parameters {
+    real<lower=0, upper=1> theta;
+}
+
+model {
+    theta ~ beta(1,1);      //prior
+    y ~ binomial(N, theta); //likelihood
+}
+```
+
+```{r}
+model$print()
 ```
