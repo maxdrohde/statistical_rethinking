@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.30">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="description" content="Notes on Statistical Rethinking Course 2022">
+<title>Statistical Rethinking Lecture Notes - 6&nbsp; Eight Schools Case Study</title>
+<style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+<script src="site_libs/quarto-nav/quarto-nav.js"></script><script src="site_libs/quarto-nav/headroom.min.js"></script><script src="site_libs/clipboard/clipboard.min.js"></script><meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script><script src="site_libs/quarto-search/fuse.min.js"></script><script src="site_libs/quarto-search/quarto-search.js"></script><link href="./lecture_5.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script><script src="site_libs/quarto-html/popper.min.js"></script><script src="site_libs/quarto-html/tippy.umd.min.js"></script><script src="site_libs/quarto-html/anchor.min.js"></script><link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script><link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+    "location": "sidebar",
+    "copy-button": false,
+    "collapse-after": 2,
+    "panel-placement": "start",
+    "type": "textbox",
+    "limit": 20,
+    "language": {
+      "search-no-results-text": "No results",
+      "search-matching-documents-text": "matching documents",
+      "search-copy-link-title": "Copy link to search",
+      "search-hide-matches-text": "Hide additional matches",
+      "search-more-match-text": "more match in this document",
+      "search-more-matches-text": "more matches in this document",
+      "search-clear-button-title": "Clear",
+      "search-detached-cancel-button-title": "Cancel",
+      "search-submit-button-title": "Submit"
+    }
+  }</script><!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body class="floating">
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">
+<span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Eight Schools Case Study</span>
+</h1>
+      <button type="button" class="quarto-btn-toggle btn">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Statistical Rethinking Lecture Notes</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Welcome</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Lecture 1</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_2.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lecture 2</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_3.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lecture 3</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_4.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lecture 4</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lecture_5.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lecture 5</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./eight_schools_case_study.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Eight Schools Case Study</span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc"><h2 id="toc-title">Table of contents</h2>
+<ul>
+<li><a href="#load-packages" class="nav-link active" data-scroll-target="#load-packages"> <span class="header-section-number">6.1</span> Load packages</a></li>
+<li><a href="#read-in-data" class="nav-link" data-scroll-target="#read-in-data"> <span class="header-section-number">6.2</span> Read in data</a></li>
+<li><a href="#centered-stan-model" class="nav-link" data-scroll-target="#centered-stan-model"> <span class="header-section-number">6.3</span> Centered STAN model</a></li>
+<li><a href="#fit-with-centered-model-with-varying-adapt-delta" class="nav-link" data-scroll-target="#fit-with-centered-model-with-varying-adapt-delta"> <span class="header-section-number">6.4</span> Fit with centered model with varying adapt delta</a></li>
+<li><a href="#non-centered-stan-model" class="nav-link" data-scroll-target="#non-centered-stan-model"> <span class="header-section-number">6.5</span> Non-centered STAN model</a></li>
+</ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header"><div class="quarto-title-block d-none d-lg-block"><div><h1 class="title d-none d-lg-block">
+<span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Eight Schools Case Study</span>
+</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</header><section id="load-packages" class="level2" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="load-packages">
+<span class="header-section-number">6.1</span> Load packages</h2>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="co"># Load packages</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/cmdstanr/">cmdstanr</a></span><span class="op">)</span>
+<span class="fu">cmdstanr</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/cmdstanr/reference/register_knitr_engine.html">register_knitr_engine</a></span><span class="op">(</span>override <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rethinking</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://hbiostat.org/R/Hmisc/">Hmisc</a></span><span class="op">)</span>
+
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/posterior/">posterior</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/bayesplot/">bayesplot</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mjskay.github.io/tidybayes/">tidybayes</a></span><span class="op">)</span>
+
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://allancameron.github.io/geomtextpath/">geomtextpath</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/cowplot/">cowplot</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidyverse/glue">glue</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://gganimate.com">gganimate</a></span><span class="op">)</span>
+
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+
+<span class="co"># Set global ggplot theme</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html">theme_set</a></span><span class="op">(</span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/theme_cowplot.html">theme_cowplot</a></span><span class="op">(</span>font_size<span class="op">=</span><span class="fl">12</span>,
+                                 font_family <span class="op">=</span> <span class="st">"Source Sans Pro"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">0.7</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section><section id="read-in-data" class="level2" data-number="6.2"><h2 data-number="6.2" class="anchored" data-anchor-id="read-in-data">
+<span class="header-section-number">6.2</span> Read in data</h2>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="va">J</span> <span class="op">&lt;-</span> <span class="fl">8</span>
+<span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">28</span>, <span class="fl">8</span>, <span class="op">-</span><span class="fl">3</span>, <span class="fl">7</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">18</span>, <span class="fl">12</span><span class="op">)</span>
+<span class="va">sigma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">10</span>, <span class="fl">16</span>, <span class="fl">11</span>, <span class="fl">9</span>, <span class="fl">11</span>, <span class="fl">10</span>, <span class="fl">18</span><span class="op">)</span>
+
+<span class="va">data_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>J<span class="op">=</span><span class="va">J</span>, y<span class="op">=</span><span class="va">y</span>, sigma<span class="op">=</span><span class="va">sigma</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section><section id="centered-stan-model" class="level2" data-number="6.3"><h2 data-number="6.3" class="anchored" data-anchor-id="centered-stan-model">
+<span class="header-section-number">6.3</span> Centered STAN model</h2>
+<div class="cell" data-output.var="model">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb3"><pre class="sourceCode stan cell-code code-with-copy"><code class="sourceCode stan"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; J;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y[J];</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma[J];</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; tau;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> theta[J];</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  tau ~ cauchy(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  theta ~ normal(mu, tau);</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  y ~ normal(theta, sigma);</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section><section id="fit-with-centered-model-with-varying-adapt-delta" class="level2" data-number="6.4"><h2 data-number="6.4" class="anchored" data-anchor-id="fit-with-centered-model-with-varying-adapt-delta">
+<span class="header-section-number">6.4</span> Fit with centered model with varying adapt delta</h2>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="va">make_plot</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">adapt_delta</span><span class="op">)</span><span class="op">{</span>
+  
+  <span class="va">fit</span> <span class="op">&lt;-</span>
+    <span class="va">model</span><span class="op">$</span><span class="fu">sample</span><span class="op">(</span>
+      data <span class="op">=</span> <span class="va">data_list</span>, 
+      seed <span class="op">=</span> <span class="fl">123</span>, 
+      chains <span class="op">=</span> <span class="fl">4</span>, 
+      parallel_chains <span class="op">=</span> <span class="fl">4</span>,
+      refresh <span class="op">=</span> <span class="fl">0</span>,
+      adapt_delta <span class="op">=</span> <span class="va">adapt_delta</span>,
+      iter_sampling <span class="op">=</span> <span class="fl">8000</span>,
+      show_messages<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+  
+  <span class="va">draws</span> <span class="op">&lt;-</span>
+  <span class="va">fit</span><span class="op">$</span><span class="fu">draws</span><span class="op">(</span>format<span class="op">=</span><span class="st">"df"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>log_tau <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">tau</span><span class="op">)</span><span class="op">)</span>
+  
+  <span class="va">draws</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">`theta[1]`</span>,
+      y <span class="op">=</span> <span class="va">log_tau</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>, xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">40</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html">glue</a></span><span class="op">(</span><span class="st">"Adapt delta = {adapt_delta}"</span><span class="op">)</span><span class="op">)</span>
+<span class="op">}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span>
+<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.85</span><span class="op">)</span>
+<span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.9</span><span class="op">)</span>
+<span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.95</span><span class="op">)</span>
+<span class="va">p5</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.99</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="op">(</span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span> <span class="op">+</span> <span class="va">p3</span> <span class="op">+</span> <span class="va">p4</span> <span class="op">+</span> <span class="va">p5</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html">plot_layout</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="eight_schools_case_study_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+</section><section id="non-centered-stan-model" class="level2" data-number="6.5"><h2 data-number="6.5" class="anchored" data-anchor-id="non-centered-stan-model">
+<span class="header-section-number">6.5</span> Non-centered STAN model</h2>
+<div class="cell" data-output.var="model">
+<details open=""><summary>Code</summary><div class="sourceCode" id="cb7"><pre class="sourceCode stan cell-code code-with-copy"><code class="sourceCode stan"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; J;</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> y[J];</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma[J];</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> mu;</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; tau;</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> theta_tilde[J];</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">transformed parameters</span> {</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> theta[J];</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span>:J)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    theta[j] = mu + tau * theta_tilde[j];</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  mu ~ normal(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  tau ~ cauchy(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  theta_tilde ~ normal(<span class="dv">0</span>, <span class="dv">1</span>);</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  y ~ normal(theta, sigma);</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.8</span><span class="op">)</span>
+<span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.85</span><span class="op">)</span>
+<span class="va">p3</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.9</span><span class="op">)</span>
+<span class="va">p4</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.95</span><span class="op">)</span>
+<span class="va">p5</span> <span class="op">&lt;-</span> <span class="fu">make_plot</span><span class="op">(</span><span class="fl">0.99</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details><summary>Code</summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span class="op">(</span><span class="va">p1</span> <span class="op">+</span> <span class="va">p2</span> <span class="op">+</span> <span class="va">p3</span> <span class="op">+</span> <span class="va">p4</span> <span class="op">+</span> <span class="va">p5</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html">plot_layout</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<p><img src="eight_schools_case_study_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+
+
+<!-- -->
+<div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title anchored" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Eight Schools Case Study</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load packages</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load packages</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>cmdstanr<span class="sc">::</span><span class="fu">register_knitr_engine</span>(<span class="at">override =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rethinking)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Hmisc)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(posterior)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidybayes)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geomtextpath)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Set global ggplot theme</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(cowplot<span class="sc">::</span><span class="fu">theme_cowplot</span>(<span class="at">font_size=</span><span class="dv">12</span>,</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">font_family =</span> <span class="st">"Source Sans Pro"</span>))</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="fl">0.7</span>)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Read in data</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>J <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">28</span>, <span class="dv">8</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">7</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">18</span>, <span class="dv">12</span>)</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>sigma <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">10</span>, <span class="dv">16</span>, <span class="dv">11</span>, <span class="dv">9</span>, <span class="dv">11</span>, <span class="dv">10</span>, <span class="dv">18</span>)</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>data_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">J=</span>J, <span class="at">y=</span>y, <span class="at">sigma=</span>sigma)</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Centered STAN model</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{cmdstan, output.var = "model"}</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="er">#| code-fold: show</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>data <span class="op">{</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> J<span class="op">;</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  real y<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> sigma<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>parameters <span class="op">{</span></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>  real mu<span class="op">;</span></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau<span class="op">;</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  real theta<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>model <span class="op">{</span></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>  mu <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">5</span><span class="op">);</span></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>  tau <span class="op">~</span> cauchy<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">5</span><span class="op">);</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  theta <span class="op">~</span> normal<span class="op">(</span>mu<span class="op">,</span> tau<span class="op">);</span></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>  y <span class="op">~</span> normal<span class="op">(</span>theta<span class="op">,</span> sigma<span class="op">);</span></span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a><span class="fu">## Fit with centered model with varying adapt delta</span></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>make_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(adapt_delta){</span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>    model<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> data_list, </span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>      <span class="at">seed =</span> <span class="dv">123</span>, </span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">chains =</span> <span class="dv">4</span>, </span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>      <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>      <span class="at">adapt_delta =</span> adapt_delta,</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">iter_sampling =</span> <span class="dv">8000</span>,</span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">show_messages=</span><span class="cn">FALSE</span>)</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a>  draws <span class="ot">&lt;-</span></span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>  fit<span class="sc">$</span><span class="fu">draws</span>(<span class="at">format=</span><span class="st">"df"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">log_tau =</span> <span class="fu">log</span>(tau))</span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>  draws <span class="sc">%&gt;%</span></span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">theta[1]</span><span class="st">`</span>,</span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> log_tau) <span class="sc">+</span></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span><span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>), <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">40</span>,<span class="dv">40</span>)) <span class="sc">+</span></span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="fu">glue</span>(<span class="st">"Adapt delta = {adapt_delta}"</span>))</span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.8</span>)</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.85</span>)</span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.9</span>)</span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.95</span>)</span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.99</span>)</span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 12</span></span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> p4 <span class="sc">+</span> p5) <span class="sc">+</span></span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">5</span>)</span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a><span class="fu">## Non-centered STAN model</span></span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a><span class="in">```{cmdstan, output.var = "model"}</span></span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a><span class="er">#| code-fold: show</span></span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a>data <span class="op">{</span></span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span><span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> J<span class="op">;</span></span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>  real y<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> sigma<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a>parameters <span class="op">{</span></span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>  real mu<span class="op">;</span></span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>  real<span class="op">&lt;</span>lower<span class="op">=</span><span class="dv">0</span><span class="op">&gt;</span> tau<span class="op">;</span></span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>  real theta_tilde<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>transformed parameters <span class="op">{</span></span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>  real theta<span class="op">[</span>J<span class="op">];</span></span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span>j in <span class="dv">1</span><span class="op">:</span>J<span class="op">)</span></span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>    theta<span class="op">[</span>j<span class="op">]</span> <span class="op">=</span> mu <span class="op">+</span> tau <span class="op">*</span> theta_tilde<span class="op">[</span>j<span class="op">];</span></span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>model <span class="op">{</span></span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>  mu <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">5</span><span class="op">);</span></span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>  tau <span class="op">~</span> cauchy<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">5</span><span class="op">);</span></span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>  theta_tilde <span class="op">~</span> normal<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a>  y <span class="op">~</span> normal<span class="op">(</span>theta<span class="op">,</span> sigma<span class="op">);</span></span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.8</span>)</span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.85</span>)</span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.9</span>)</span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.95</span>)</span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">make_plot</span>(<span class="fl">0.99</span>)</span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 12</span></span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span> p2 <span class="sc">+</span> p3 <span class="sc">+</span> p4 <span class="sc">+</span> p5) <span class="sc">+</span></span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">5</span>)</span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</section></main><!-- /main --><script type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    setTimeout(function() {
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./lecture_5.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lecture 5</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+</body></html>

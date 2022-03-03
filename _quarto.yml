@@ -15,6 +15,7 @@ book:
     - lecture_3.qmd
     - lecture_4.qmd
     - lecture_5.qmd
+    - eight_schools_case_study.qmd
 
 format:
   html: 

@@ -1,0 +1,158 @@
+# Eight Schools Case Study
+
+## Load packages
+
+```{r}
+# Load packages
+library(cmdstanr)
+cmdstanr::register_knitr_engine(override = FALSE)
+
+library(rethinking)
+library(Hmisc)
+
+library(posterior)
+library(bayesplot)
+library(tidybayes)
+
+library(geomtextpath)
+library(cowplot)
+library(patchwork)
+library(glue)
+library(gganimate)
+
+library(tidyverse)
+
+# Set global ggplot theme
+theme_set(cowplot::theme_cowplot(font_size=12,
+                                 font_family = "Source Sans Pro"))
+
+set.seed(0.7)
+```
+
+## Read in data
+
+```{r}
+J <- 8
+y <- c(28, 8, -3, 7, -1, 1, 18, 12)
+sigma <- c(15, 10, 16, 11, 9, 11, 10, 18)
+
+data_list <- list(J=J, y=y, sigma=sigma)
+```
+
+## Centered STAN model
+
+```{cmdstan, output.var = "model"}
+#| code-fold: show
+
+data {
+  int<lower=0> J;
+  real y[J];
+  real<lower=0> sigma[J];
+}
+
+parameters {
+  real mu;
+  real<lower=0> tau;
+  real theta[J];
+}
+
+model {
+  mu ~ normal(0, 5);
+  tau ~ cauchy(0, 5);
+  theta ~ normal(mu, tau);
+  y ~ normal(theta, sigma);
+}
+```
+
+## Fit with centered model with varying adapt delta
+
+```{r}
+make_plot <- function(adapt_delta){
+  
+  fit <-
+    model$sample(
+      data = data_list, 
+      seed = 123, 
+      chains = 4, 
+      parallel_chains = 4,
+      refresh = 0,
+      adapt_delta = adapt_delta,
+      iter_sampling = 8000,
+      show_messages=FALSE)
+  
+  draws <-
+  fit$draws(format="df") %>%
+  mutate(log_tau = log(tau))
+  
+  draws %>%
+  ggplot() +
+  aes(x = `theta[1]`,
+      y = log_tau) +
+  geom_point(alpha=0.2) +
+  coord_cartesian(ylim = c(-4, 4), xlim = c(-40,40)) +
+  labs(subtitle = glue("Adapt delta = {adapt_delta}"))
+}
+```
+
+```{r}
+#| output: false
+p1 <- make_plot(0.8)
+p2 <- make_plot(0.85)
+p3 <- make_plot(0.9)
+p4 <- make_plot(0.95)
+p5 <- make_plot(0.99)
+```
+
+```{r}
+#| fig-width: 12
+
+(p1 + p2 + p3 + p4 + p5) +
+  plot_layout(ncol = 5)
+```
+
+## Non-centered STAN model
+
+```{cmdstan, output.var = "model"}
+#| code-fold: show
+
+data {
+  int<lower=0> J;
+  real y[J];
+  real<lower=0> sigma[J];
+}
+
+parameters {
+  real mu;
+  real<lower=0> tau;
+  real theta_tilde[J];
+}
+
+transformed parameters {
+  real theta[J];
+  for (j in 1:J)
+    theta[j] = mu + tau * theta_tilde[j];
+}
+
+model {
+  mu ~ normal(0, 5);
+  tau ~ cauchy(0, 5);
+  theta_tilde ~ normal(0, 1);
+  y ~ normal(theta, sigma);
+}
+```
+
+```{r}
+#| output: false
+p1 <- make_plot(0.8)
+p2 <- make_plot(0.85)
+p3 <- make_plot(0.9)
+p4 <- make_plot(0.95)
+p5 <- make_plot(0.99)
+```
+
+```{r}
+#| fig-width: 12
+
+(p1 + p2 + p3 + p4 + p5) +
+  plot_layout(ncol = 5)
+```

@@ -61,5 +61,40 @@
     "title": "\n5  Lecture 5\n",
     "section": "",
     "text": "Code# Load packages\nlibrary(rethinking)\nlibrary(Hmisc)\n\nlibrary(rstanarm)\nlibrary(cmdstanr)\nlibrary(posterior)\nlibrary(bayesplot)\nlibrary(tidybayes)\n\nlibrary(geomtextpath)\nlibrary(cowplot)\nlibrary(patchwork)\nlibrary(glue)\nlibrary(gganimate)\n\nlibrary(tidyverse)\n\n# Set global ggplot theme\ntheme_set(cowplot::theme_cowplot(font_size=12,\n                                 font_family = \"Source Sans Pro\"))\n\nset.seed(0.7)\n\n\n\n\n\nSource Code\n# Lecture 5\n\n```{r}\n# Load packages\nlibrary(rethinking)\nlibrary(Hmisc)\n\nlibrary(rstanarm)\nlibrary(cmdstanr)\nlibrary(posterior)\nlibrary(bayesplot)\nlibrary(tidybayes)\n\nlibrary(geomtextpath)\nlibrary(cowplot)\nlibrary(patchwork)\nlibrary(glue)\nlibrary(gganimate)\n\nlibrary(tidyverse)\n\n# Set global ggplot theme\ntheme_set(cowplot::theme_cowplot(font_size=12,\n                                 font_family = \"Source Sans Pro\"))\n\nset.seed(0.7)\n```"
+  },
+  {
+    "objectID": "eight_schools_case_study.html#load-packages",
+    "href": "eight_schools_case_study.html#load-packages",
+    "title": "\n6  Eight Schools Case Study\n",
+    "section": "\n6.1 Load packages",
+    "text": "6.1 Load packages\n\nCode# Load packages\nlibrary(cmdstanr)\ncmdstanr::register_knitr_engine(override = FALSE)\n\nlibrary(rethinking)\nlibrary(Hmisc)\n\nlibrary(posterior)\nlibrary(bayesplot)\nlibrary(tidybayes)\n\nlibrary(geomtextpath)\nlibrary(cowplot)\nlibrary(patchwork)\nlibrary(glue)\nlibrary(gganimate)\n\nlibrary(tidyverse)\n\n# Set global ggplot theme\ntheme_set(cowplot::theme_cowplot(font_size=12,\n                                 font_family = \"Source Sans Pro\"))\n\nset.seed(0.7)"
+  },
+  {
+    "objectID": "eight_schools_case_study.html#read-in-data",
+    "href": "eight_schools_case_study.html#read-in-data",
+    "title": "\n6  Eight Schools Case Study\n",
+    "section": "\n6.2 Read in data",
+    "text": "6.2 Read in data\n\nCodeJ <- 8\ny <- c(28, 8, -3, 7, -1, 1, 18, 12)\nsigma <- c(15, 10, 16, 11, 9, 11, 10, 18)\n\ndata_list <- list(J=J, y=y, sigma=sigma)"
+  },
+  {
+    "objectID": "eight_schools_case_study.html#centered-stan-model",
+    "href": "eight_schools_case_study.html#centered-stan-model",
+    "title": "\n6  Eight Schools Case Study\n",
+    "section": "\n6.3 Centered STAN model",
+    "text": "6.3 Centered STAN model\n\nCodedata {\n  int<lower=0> J;\n  real y[J];\n  real<lower=0> sigma[J];\n}\n\nparameters {\n  real mu;\n  real<lower=0> tau;\n  real theta[J];\n}\n\nmodel {\n  mu ~ normal(0, 5);\n  tau ~ cauchy(0, 5);\n  theta ~ normal(mu, tau);\n  y ~ normal(theta, sigma);\n}"
+  },
+  {
+    "objectID": "eight_schools_case_study.html#fit-with-centered-model-with-varying-adapt-delta",
+    "href": "eight_schools_case_study.html#fit-with-centered-model-with-varying-adapt-delta",
+    "title": "\n6  Eight Schools Case Study\n",
+    "section": "\n6.4 Fit with centered model with varying adapt delta",
+    "text": "6.4 Fit with centered model with varying adapt delta\n\nCodemake_plot <- function(adapt_delta){\n  \n  fit <-\n    model$sample(\n      data = data_list, \n      seed = 123, \n      chains = 4, \n      parallel_chains = 4,\n      refresh = 0,\n      adapt_delta = adapt_delta,\n      iter_sampling = 8000,\n      show_messages=FALSE)\n  \n  draws <-\n  fit$draws(format=\"df\") %>%\n  mutate(log_tau = log(tau))\n  \n  draws %>%\n  ggplot() +\n  aes(x = `theta[1]`,\n      y = log_tau) +\n  geom_point(alpha=0.2) +\n  coord_cartesian(ylim = c(-4, 4), xlim = c(-40,40)) +\n  labs(subtitle = glue(\"Adapt delta = {adapt_delta}\"))\n}\n\n\n\nCodep1 <- make_plot(0.8)\np2 <- make_plot(0.85)\np3 <- make_plot(0.9)\np4 <- make_plot(0.95)\np5 <- make_plot(0.99)\n\n\n\nCode(p1 + p2 + p3 + p4 + p5) +\n  plot_layout(ncol = 5)"
+  },
+  {
+    "objectID": "eight_schools_case_study.html#non-centered-stan-model",
+    "href": "eight_schools_case_study.html#non-centered-stan-model",
+    "title": "\n6  Eight Schools Case Study\n",
+    "section": "\n6.5 Non-centered STAN model",
+    "text": "6.5 Non-centered STAN model\n\nCodedata {\n  int<lower=0> J;\n  real y[J];\n  real<lower=0> sigma[J];\n}\n\nparameters {\n  real mu;\n  real<lower=0> tau;\n  real theta_tilde[J];\n}\n\ntransformed parameters {\n  real theta[J];\n  for (j in 1:J)\n    theta[j] = mu + tau * theta_tilde[j];\n}\n\nmodel {\n  mu ~ normal(0, 5);\n  tau ~ cauchy(0, 5);\n  theta_tilde ~ normal(0, 1);\n  y ~ normal(theta, sigma);\n}\n\n\n\nCodep1 <- make_plot(0.8)\np2 <- make_plot(0.85)\np3 <- make_plot(0.9)\np4 <- make_plot(0.95)\np5 <- make_plot(0.99)\n\n\n\nCode(p1 + p2 + p3 + p4 + p5) +\n  plot_layout(ncol = 5)\n\n\n\n\n\n\n\nSource Code\n# Eight Schools Case Study\n\n## Load packages\n\n```{r}\n# Load packages\nlibrary(cmdstanr)\ncmdstanr::register_knitr_engine(override = FALSE)\n\nlibrary(rethinking)\nlibrary(Hmisc)\n\nlibrary(posterior)\nlibrary(bayesplot)\nlibrary(tidybayes)\n\nlibrary(geomtextpath)\nlibrary(cowplot)\nlibrary(patchwork)\nlibrary(glue)\nlibrary(gganimate)\n\nlibrary(tidyverse)\n\n# Set global ggplot theme\ntheme_set(cowplot::theme_cowplot(font_size=12,\n                                 font_family = \"Source Sans Pro\"))\n\nset.seed(0.7)\n```\n\n## Read in data\n\n```{r}\nJ <- 8\ny <- c(28, 8, -3, 7, -1, 1, 18, 12)\nsigma <- c(15, 10, 16, 11, 9, 11, 10, 18)\n\ndata_list <- list(J=J, y=y, sigma=sigma)\n```\n\n## Centered STAN model\n\n```{cmdstan, output.var = \"model\"}\n#| code-fold: show\n\ndata {\n  int<lower=0> J;\n  real y[J];\n  real<lower=0> sigma[J];\n}\n\nparameters {\n  real mu;\n  real<lower=0> tau;\n  real theta[J];\n}\n\nmodel {\n  mu ~ normal(0, 5);\n  tau ~ cauchy(0, 5);\n  theta ~ normal(mu, tau);\n  y ~ normal(theta, sigma);\n}\n```\n\n## Fit with centered model with varying adapt delta\n\n```{r}\nmake_plot <- function(adapt_delta){\n  \n  fit <-\n    model$sample(\n      data = data_list, \n      seed = 123, \n      chains = 4, \n      parallel_chains = 4,\n      refresh = 0,\n      adapt_delta = adapt_delta,\n      iter_sampling = 8000,\n      show_messages=FALSE)\n  \n  draws <-\n  fit$draws(format=\"df\") %>%\n  mutate(log_tau = log(tau))\n  \n  draws %>%\n  ggplot() +\n  aes(x = `theta[1]`,\n      y = log_tau) +\n  geom_point(alpha=0.2) +\n  coord_cartesian(ylim = c(-4, 4), xlim = c(-40,40)) +\n  labs(subtitle = glue(\"Adapt delta = {adapt_delta}\"))\n}\n```\n\n```{r}\n#| output: false\np1 <- make_plot(0.8)\np2 <- make_plot(0.85)\np3 <- make_plot(0.9)\np4 <- make_plot(0.95)\np5 <- make_plot(0.99)\n```\n\n```{r}\n#| fig-width: 12\n\n(p1 + p2 + p3 + p4 + p5) +\n  plot_layout(ncol = 5)\n```\n\n## Non-centered STAN model\n\n```{cmdstan, output.var = \"model\"}\n#| code-fold: show\n\ndata {\n  int<lower=0> J;\n  real y[J];\n  real<lower=0> sigma[J];\n}\n\nparameters {\n  real mu;\n  real<lower=0> tau;\n  real theta_tilde[J];\n}\n\ntransformed parameters {\n  real theta[J];\n  for (j in 1:J)\n    theta[j] = mu + tau * theta_tilde[j];\n}\n\nmodel {\n  mu ~ normal(0, 5);\n  tau ~ cauchy(0, 5);\n  theta_tilde ~ normal(0, 1);\n  y ~ normal(theta, sigma);\n}\n```\n\n```{r}\n#| output: false\np1 <- make_plot(0.8)\np2 <- make_plot(0.85)\np3 <- make_plot(0.9)\np4 <- make_plot(0.95)\np5 <- make_plot(0.99)\n```\n\n```{r}\n#| fig-width: 12\n\n(p1 + p2 + p3 + p4 + p5) +\n  plot_layout(ncol = 5)\n```"
   }
 ]
