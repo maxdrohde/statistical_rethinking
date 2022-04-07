@@ -20,8 +20,57 @@ library(gganimate)
 library(tidyverse)
 
 # Set global ggplot theme
-theme_set(cowplot::theme_cowplot(font_size=12,
+theme_set(cowplot::theme_cowplot(font_size=14,
                                  font_family = "Source Sans Pro"))
+
+cmdstanr::register_knitr_engine(override = TRUE)
+
+options(mc.cores = parallel::detectCores())
 
 set.seed(0.7)
 ```
+
+```{r}
+data(Howell1)
+
+df <- Howell1
+
+# Filter to adults only
+df_adult <-
+  df %>%
+  filter(age >= 18)
+```
+
+```{r}
+# Plot weight vs height for adults only
+df_adult %>%
+  ggplot() +
+  aes(x = weight,
+      y = height) %>%
+  geom_point() +
+  labs(x = "Weight",
+       y = "Height")
+```
+
+
+## Stan model
+
+```{stan, output.var = "model"}
+data {
+    int<lower=0> N;
+    int <lower=0, upper=N> y;
+}
+
+parameters {
+    real<lower=0, upper=1> theta;
+}
+
+model {
+    theta ~ beta(1,1);      //prior
+    y ~ binomial(N, theta); //likelihood
+}
+```
+
+
+
+

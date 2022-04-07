@@ -147,7 +147,7 @@ df %>%
 
 ```{r}
 #| out-width: 100%
-#| eval: false
+#| eval: true
 
 anim <-
 df %>%
